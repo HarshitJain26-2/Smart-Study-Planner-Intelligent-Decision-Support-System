@@ -1,0 +1,14 @@
+# 3-Layer Architecture local / temp files
+.tmp/
+.env
+credentials.json
+token.json
+
+# Python caches and system files
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
