@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Study Planner – Intelligent Decision Support System</title>
+    <meta name="description" content="An intelligent study planning decision support system designed using rule-based reasoning.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- App Background Elements -->
+    <div class="glow-bg glow-primary"></div>
+    <div class="glow-bg glow-secondary"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg glass-card sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#" id="navbarBrandLink">
+                <div class="logo-icon me-2">
+                    <i class="fa-solid fa-brain-circuit"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Smart Study Planner</span>
+                    <span class="brand-subtitle d-block">Intelligent Decision Support System</span>
+                </div>
+            </a>
+            <div class="d-flex align-items-center ms-auto">
+                <!-- Theme Toggle Button -->
+                <button class="btn btn-theme-toggle me-3" id="themeToggleBtn" aria-label="Toggle light/dark theme">
+                    <i class="fa-solid fa-moon text-yellow"></i>
+                </button>
+                <span class="badge badge-tech text-uppercase">Rule-Based Expert System</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard Container -->
+    <main class="container my-4">
+        <!-- Top Row: Welcome & Quote -->
+        <div class="row g-4 mb-4" data-aos="fade-down" data-aos-duration="800">
+            <div class="col-lg-7 d-flex flex-column justify-content-center">
+                <div class="dashboard-welcome">
+                    <div class="text-gradient d-inline-block fw-bold outfit-font mb-1 text-uppercase tracking-wide fs-6">
+                        Soft Computing Laboratory Assignment
+                    </div>
+                    <h1 class="h2 text-contrast outfit-font fw-extrabold mb-2">Optimize Your Preparation Strategy</h1>
+                    <p class="text-muted fs-6 mb-0">
+                        This system uses a rule-based inference engine to mimic human academic advisors. Enter your course metadata below to receive structured study paths.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="glass-card quote-card h-100 p-4 d-flex flex-column justify-content-between position-relative overflow-hidden">
+                    <div class="quote-icon position-absolute">
+                        <i class="fa-solid fa-quote-right"></i>
+                    </div>
+                    <div class="quote-content position-relative z-index-1">
+                        <p class="quote-text italic-text mb-3" id="motivationalQuote">"It always seems impossible until it's done."</p>
+                        <span class="quote-author block-text fw-bold text-gradient" id="quoteAuthor">— Nelson Mandela</span>
+                    </div>
+                    <div class="date-display text-muted text-end small-text mt-3">
+                        <i class="fa-regular fa-calendar-check me-1"></i> <span id="currentDate">{{ current_date }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Row: Form & Main Metrics -->
+        <div class="row g-4">
+            <!-- Left Column: Input Form (4 cols on desktop) -->
+            <div class="col-lg-4" data-aos="fade-right" data-aos-duration="1000">
+                <div class="glass-card h-100 p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fa-solid fa-sliders-up text-primary me-2 fs-5"></i>
+                        <h2 class="h5 mb-0 text-contrast outfit-font fw-bold">Parameters Configuration</h2>
+                    </div>
+
+                    <form id="studyPlannerForm" novalidate>
+                        <!-- Student Name -->
+                        <div class="mb-3">
+                            <label for="studentName" class="form-label font-secondary">Student Name</label>
+                            <div class="input-group-glass">
+                                <span class="input-group-text-glass"><i class="fa-solid fa-user"></i></span>
+                                <input type="text" class="form-control form-control-glass" id="studentName" placeholder="Harshit Jain" value="Harshit Jain" required>
+                            </div>
+                            <div class="invalid-feedback-custom" id="err_student_name"></div>
+                        </div>
+
+                        <!-- Subject Name -->
+                        <div class="mb-3">
+                            <label for="subjectName" class="form-label font-secondary">Subject / Course Title</label>
+                            <div class="input-group-glass">
+                                <span class="input-group-text-glass"><i class="fa-solid fa-book"></i></span>
+                                <input type="text" class="form-control form-control-glass" id="subjectName" placeholder="Soft Computing" value="Soft Computing" required>
+                            </div>
+                            <div class="invalid-feedback-custom" id="err_subject_name"></div>
+                        </div>
+
+                        <!-- Days Left Before Exam -->
+                        <div class="mb-3">
+                            <label for="daysLeft" class="form-label font-secondary d-flex justify-content-between">
+                                <span>Days Left Before Exam</span>
+                                <span class="badge bg-secondary-subtle text-primary border-radius-sm" id="daysVal">10 Days</span>
+                            </label>
+                            <div class="input-group-glass">
+                                <span class="input-group-text-glass"><i class="fa-solid fa-hourglass-half"></i></span>
+                                <input type="number" class="form-control form-control-glass" id="daysLeft" min="1" max="365" value="10" required>
+                            </div>
+                            <div class="small-text text-muted mt-1">Accepts 1 to 365 days.</div>
+                            <div class="invalid-feedback-custom" id="err_days_left"></div>
+                        </div>
+
+                        <!-- Syllabus Completed % -->
+                        <div class="mb-3">
+                            <label for="syllabusCompleted" class="form-label font-secondary d-flex justify-content-between">
+                                <span>Syllabus Completed</span>
+                                <span class="badge bg-secondary-subtle text-primary border-radius-sm" id="syllabusVal">60%</span>
+                            </label>
+                            <div class="input-group-glass mb-2">
+                                <span class="input-group-text-glass"><i class="fa-solid fa-percent"></i></span>
+                                <input type="number" class="form-control form-control-glass" id="syllabusCompleted" min="0" max="100" value="60" required>
+                            </div>
+                            <input type="range" class="form-range custom-range" id="syllabusRange" min="0" max="100" value="60">
+                            <div class="invalid-feedback-custom" id="err_syllabus_completed"></div>
+                        </div>
+
+                        <!-- Study Hours Available Per Day -->
+                        <div class="mb-3">
+                            <label for="studyHours" class="form-label font-secondary d-flex justify-content-between">
+                                <span>Study Hours Per Day</span>
+                                <span class="badge bg-secondary-subtle text-primary border-radius-sm" id="hoursVal">5 Hours</span>
+                            </label>
+                            <div class="input-group-glass mb-2">
+                                <span class="input-group-text-glass"><i class="fa-solid fa-clock"></i></span>
+                                <input type="number" class="form-control form-control-glass" id="studyHours" step="0.5" min="0" max="24" value="5" required>
+                            </div>
+                            <input type="range" class="form-range custom-range" id="hoursRange" min="0" max="12" step="0.5" value="5">
+                            <div class="invalid-feedback-custom" id="err_study_hours"></div>
+                        </div>
+
+                        <!-- Subject Difficulty (1-5 scale) -->
+                        <div class="mb-4">
+                            <label class="form-label font-secondary">Subject Difficulty Level</label>
+                            <div class="d-flex justify-content-between rating-stars-container">
+                                <input type="hidden" id="difficulty" value="4">
+                                <button type="button" class="btn btn-star active" data-value="1" title="Very Easy"><i class="fa-solid fa-star"></i><span class="d-block small-text mt-1">1</span></button>
+                                <button type="button" class="btn btn-star active" data-value="2" title="Easy"><i class="fa-solid fa-star"></i><span class="d-block small-text mt-1">2</span></button>
+                                <button type="button" class="btn btn-star active" data-value="3" title="Medium"><i class="fa-solid fa-star"></i><span class="d-block small-text mt-1">3</span></button>
+                                <button type="button" class="btn btn-star active" data-value="4" title="Hard"><i class="fa-solid fa-star"></i><span class="d-block small-text mt-1">4</span></button>
+                                <button type="button" class="btn btn-star" data-value="5" title="Very Hard"><i class="fa-solid fa-star"></i><span class="d-block small-text mt-1">5</span></button>
+                            </div>
+                            <div class="invalid-feedback-custom" id="err_difficulty"></div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <button type="submit" class="btn btn-primary-gradient w-100 py-2-5" id="btnAnalyze">
+                                    <span class="spinner-border spinner-border-sm d-none me-1" id="analyzeSpinner" role="status" aria-hidden="true"></span>
+                                    <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Analyze & Plan
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-outline-glass w-100 py-2-5" id="btnReset">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Dashboard Visualization & Output (8 cols) -->
+            <div class="col-lg-8" data-aos="fade-left" data-aos-duration="1000">
+                <div class="row g-4 h-100">
+                    <!-- Preparation Status Badge & Readiness Gauge -->
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 d-flex flex-column align-items-center justify-content-center text-center h-100 overflow-hidden position-relative">
+                            <div class="card-glow" id="statusCardGlow"></div>
+                            
+                            <h3 class="h6 text-muted font-secondary text-uppercase tracking-wider mb-3">Study Readiness Status</h3>
+                            
+                            <!-- Large Circle Progress Bar -->
+                            <div class="score-circle-container mb-3 position-relative">
+                                <svg class="score-svg" viewBox="0 0 120 120">
+                                    <circle class="score-bg-circle" cx="60" cy="60" r="50"></circle>
+                                    <circle class="score-progress-circle" id="scoreCircle" cx="60" cy="60" r="50"></circle>
+                                </svg>
+                                <div class="score-value-container">
+                                    <span class="score-value outfit-font" id="overallScore">0</span>
+                                    <span class="score-total">/100</span>
+                                </div>
+                            </div>
+
+                            <span class="badge badge-status mb-2 px-3 py-2 fs-6" id="preparationBadge">Pending</span>
+                            <h4 class="h5 text-contrast outfit-font fw-bold" id="preparationTitle">Awaiting Input Parameters</h4>
+                            <p class="text-muted small-text mb-0 mt-1 max-width-300 mx-auto" id="readinessSubtext">
+                                Complete configuration fields and press "Analyze & Plan" to run.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Performance Meter & Detailed Metrics -->
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                            <h3 class="h6 text-muted font-secondary text-uppercase tracking-wider mb-3">Preparation Benchmarks</h3>
+                            
+                            <!-- Benchmarks / Performance Meter -->
+                            <div class="performance-meter-container mb-4">
+                                <label class="small-text text-muted mb-2 block-text">Performance Scale Meter</label>
+                                <div class="progress performance-meter" style="height: 12px;">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 35%" title="Critical (0-35)" data-bs-toggle="tooltip"></div>
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 35%" title="Moderate (35-70)" data-bs-toggle="tooltip"></div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 20%" title="Good (70-90)" data-bs-toggle="tooltip"></div>
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 10%" title="Excellent (90-100)" data-bs-toggle="tooltip"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small-text text-muted mt-1 px-1">
+                                    <span>Critical</span>
+                                    <span>Moderate</span>
+                                    <span>Good</span>
+                                    <span>Excellent</span>
+                                </div>
+                            </div>
+
+                            <!-- Animated Metrics (Countdowns, Syllabus bar, etc.) -->
+                            <div class="metrics-stack">
+                                <!-- Syllabus Completion Bar -->
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small-text text-contrast fw-semibold"><i class="fa-solid fa-book-open text-primary me-1"></i> Syllabus Completed</span>
+                                        <span class="small-text text-muted" id="statSyllabusVal">0%</span>
+                                    </div>
+                                    <div class="progress bg-glass" style="height: 8px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-gradient-primary" id="statSyllabusBar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Study Hours Gauge -->
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small-text text-contrast fw-semibold"><i class="fa-solid fa-clock-rotate-left text-success me-1"></i> Study Allocation Daily</span>
+                                        <span class="small-text text-muted" id="statStudyHoursVal">0 hours</span>
+                                    </div>
+                                    <div class="progress bg-glass" style="height: 8px;">
+                                        <div class="progress-bar bg-gradient-success" id="statStudyHoursBar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Days Left Countdown -->
+                                <div class="mb-0">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small-text text-contrast fw-semibold"><i class="fa-solid fa-hourglass text-warning me-1"></i> Exam Proximity countdown</span>
+                                        <span class="small-text text-muted" id="statDaysLeftVal">0 days left</span>
+                                    </div>
+                                    <div class="progress bg-glass" style="height: 8px;">
+                                        <div class="progress-bar bg-gradient-warning" id="statDaysLeftBar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Recommendations, Charts & Timelines -->
+        <div class="row g-4 mt-2" id="reportSection" style="opacity: 0.5; pointer-events: none; transition: opacity 0.5s ease;">
+            <!-- Left Side: Recommendations & Daily Timeline -->
+            <div class="col-lg-7" data-aos="fade-up" data-aos-duration="1000">
+                <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between" id="reportPrintArea">
+                    <div>
+                        <!-- Header inside Printable Report -->
+                        <div class="d-none d-print-block border-bottom pb-3 mb-4">
+                            <h2>Smart Study Planner – Report</h2>
+                            <p class="text-muted mb-0">Generated on <span class="currentDateText"></span> for <strong id="printStudentName">Harshit</strong> in <strong id="printSubjectName">Soft Computing</strong></p>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fa-solid fa-list-check text-success me-2 fs-5"></i>
+                            <h2 class="h5 mb-0 text-contrast outfit-font fw-bold">Personalized Strategic Advice</h2>
+                        </div>
+
+                        <!-- Recommendations list -->
+                        <ul class="list-group list-group-flush bg-transparent mb-4" id="recommendationsList">
+                            <li class="list-group-item bg-transparent text-muted px-0 py-2 border-0">
+                                <i class="fa-solid fa-circle-check text-primary me-2"></i> Submit planning parameters and hit analyze to display results.
+                            </li>
+                        </ul>
+
+                        <!-- Daily Study Plan -->
+                        <div class="d-flex align-items-center mb-3 mt-2">
+                            <i class="fa-solid fa-calendar-day text-warning me-2 fs-5"></i>
+                            <h2 class="h5 mb-0 text-contrast outfit-font fw-bold">Recommended 24-Hour Routine</h2>
+                        </div>
+
+                        <!-- Time block timeline cards -->
+                        <div class="row g-3 timeline-grid">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="timeline-block-card p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-primary-subtle text-primary border-radius-sm mb-2"><i class="fa-solid fa-mug-saucer me-1"></i> Morning</span>
+                                        <p class="timeline-desc text-muted mb-0" id="scheduleMorning">Awaiting analysis...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="timeline-block-card p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-warning-subtle text-warning border-radius-sm mb-2"><i class="fa-solid fa-sun me-1"></i> Afternoon</span>
+                                        <p class="timeline-desc text-muted mb-0" id="scheduleAfternoon">Awaiting analysis...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="timeline-block-card p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-info-subtle text-info border-radius-sm mb-2"><i class="fa-solid fa-cloud-moon me-1"></i> Evening</span>
+                                        <p class="timeline-desc text-muted mb-0" id="scheduleEvening">Awaiting analysis...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="timeline-block-card p-3 h-100 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <span class="badge bg-dark-subtle text-contrast border-radius-sm mb-2"><i class="fa-solid fa-moon me-1"></i> Night</span>
+                                        <p class="timeline-desc text-muted mb-0" id="scheduleNight">Awaiting analysis...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Study Tips Section -->
+                    <div class="study-tips-section mt-4 pt-3 border-top-glass">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa-solid fa-lightbulb text-yellow me-2"></i>
+                            <h3 class="h6 mb-0 text-contrast outfit-font fw-bold">Dynamic Study Heuristics</h3>
+                        </div>
+                        <div class="row g-2" id="studyTipsContainer">
+                            <div class="col-md-4 text-muted small-text"><i class="fa-solid fa-angles-right text-primary me-1"></i> Tip 1 placeholder.</div>
+                            <div class="col-md-4 text-muted small-text"><i class="fa-solid fa-angles-right text-primary me-1"></i> Tip 2 placeholder.</div>
+                            <div class="col-md-4 text-muted small-text"><i class="fa-solid fa-angles-right text-primary me-1"></i> Tip 3 placeholder.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Visualization Charts -->
+            <div class="col-lg-5" data-aos="fade-up" data-aos-duration="1200">
+                <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-chart-pie text-cyan me-2 fs-5"></i>
+                                <h2 class="h5 mb-0 text-contrast outfit-font fw-bold">Analytical Visualization</h2>
+                            </div>
+                            <div class="btn-group-toggle-charts">
+                                <button class="btn btn-outline-glass btn-sm active" id="btnSyllabusChart">Syllabus</button>
+                                <button class="btn btn-outline-glass btn-sm" id="btnStudyHoursChart">Hours</button>
+                                <button class="btn btn-outline-glass btn-sm" id="btnDistributionChart">Task Division</button>
+                            </div>
+                        </div>
+
+                        <!-- Chart Containers -->
+                        <div class="chart-canvas-wrapper py-3 position-relative d-flex justify-content-center align-items-center">
+                            <!-- Doughnut Chart Container -->
+                            <div class="w-100 chart-box active" id="syllabusChartBox">
+                                <canvas id="syllabusChart"></canvas>
+                            </div>
+                            <!-- Bar Chart Container -->
+                            <div class="w-100 chart-box d-none" id="studyHoursChartBox">
+                                <canvas id="studyHoursChart"></canvas>
+                            </div>
+                            <!-- Pie Chart Container -->
+                            <div class="w-100 chart-box d-none" id="distributionChartBox">
+                                <canvas id="distributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions & Export -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top-glass">
+                        <span class="small-text text-muted"><i class="fa-solid fa-shield-halved text-cyan me-1"></i> Decision log matches local policies</span>
+                        <div class="d-flex g-2">
+                            <button class="btn btn-outline-glass btn-sm me-2" id="btnSaveReport">
+                                <i class="fa-regular fa-bookmark me-1"></i> Save Report
+                            </button>
+                            <button class="btn btn-primary-gradient btn-sm" id="btnDownloadPDF">
+                                <i class="fa-solid fa-file-pdf me-1"></i> Export PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Soft Computing Section: Explanation of Intelligent Decision Support -->
+        <div class="row g-4 mt-2 mb-4" data-aos="fade-up" data-aos-duration="1000">
+            <div class="col-12">
+                <div class="glass-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-atom text-purple me-2 fs-4"></i>
+                        <h2 class="h5 mb-0 text-contrast outfit-font fw-bold">Intelligent Decision Support System vs Conventional Systems</h2>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <h3 class="h6 text-primary fw-bold text-uppercase tracking-wider mb-2">Why is this an Intelligent Decision Support System?</h3>
+                            <p class="text-muted small-text mb-3">
+                                A conventional calculator simply applies linear arithmetic to inputs. This system acts as an <strong>Intelligent Decision Support System (IDSS)</strong> because it performs qualitative assessment using heuristic inference rules. By translating numeric inputs (e.g., Syllabus Completed % and Days Left) into linguistic rules (e.g., "Days Left is Critical and Syllabus is Low"), it models a simplified rule-based expert system that simulates an academic advisor.
+                            </p>
+                            <ul class="text-muted small-text ps-3 mb-0">
+                                <li><strong>Rule-Based Reasoning:</strong> Maps complex multi-dimensional logic scenarios to specific, human-like action lists.</li>
+                                <li><strong>Dynamic Schedule Synthesis:</strong> Allocates morning, evening, and night timeblocks based on preparation pressure.</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="h6 text-purple fw-bold text-uppercase tracking-wider mb-2">Soft Computing Evolution (Future Upgrades)</h3>
+                            <p class="text-muted small-text mb-3">
+                                In this assignment implementation, decision boundaries are rigid (deterministic `if-elif-else`). In a true Soft Computing system, these boundaries would be softened to handle real-world uncertainty:
+                            </p>
+                            <ul class="text-muted small-text ps-3 mb-0">
+                                <li><strong>Fuzzy Logic Controller:</strong> Instead of strict boundaries (e.g. `Days Left <= 3` is critical, but `4` is moderate), variables like "Difficulty" and "Urgency" are modeled as fuzzy membership functions (Very Easy, Medium, Critical) with smooth transition states and defuzzification.</li>
+                                <li><strong>Genetic Algorithms:</strong> Used to optimize daily schedule time block distributions based on student energy curves and historical performance.</li>
+                                <li><strong>Neural Networks:</strong> Predicts the actual exam score from historical study patterns and dynamically adjusts rules.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer py-4 mt-auto border-top-glass">
+        <div class="container text-center">
+            <p class="text-muted mb-1 small-text">
+                Designed and Developed for Soft Computing Assignment &copy; 2026. All rights reserved.
+            </p>
+            <p class="text-muted small-text mb-0">
+                <i class="fa-solid fa-code text-gradient me-1"></i> Powered by Python, Flask, and Advanced Agentic Rule Engine.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- App Logic JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
